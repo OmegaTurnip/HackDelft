@@ -70,8 +70,8 @@ public class Main {
 
 
 
-        calculateDailyAvg(data);
-        calculateMonthlyAvg(data);
+        averageHourlyConsumptionPerDay(data);
+        averageDailyConsumptionPerMonth(data);
 
         // test
         for (List<Energy> file : data) {
@@ -83,21 +83,17 @@ public class Main {
 
     }
 
-    private static void calculateMonthlyAvg(List<List<Energy>> data) {
-        int lastMonth = 1;
+    private static void averageDailyConsumptionPerMonth(List<List<Energy>> data) {
         double sum = 0;
         for (List<Energy> file : data) {
             for (Energy energy : file) {
-                Map<YearMonth, Double> monthlyAvg = energy.getMonthlyAvg();
                 for (Energy.Volume vol :  energy.getVolumes()) {
-                    int currentMonth = Integer.parseInt(vol.getKey().split("-")[1]);
-                    if (currentMonth==lastMonth) {
-                        sum+=vol.getValue();
-                    } else {
-                        String date = vol.getKey().split(":")[0];
-                        YearMonth ym = YearMonth.of(Integer.parseInt(date.split("-")[0]), Integer.parseInt(date.split("-")[1]));
-                        monthlyAvg.put(ym, sum/24.0);
-                        lastMonth=currentMonth;
+                    String date = vol.getKey().split(":")[0];
+                    YearMonth ym = YearMonth.of(Integer.parseInt(date.split("-")[0]), Integer.parseInt(date.split("-")[1]));
+                    int lengthOfMonth = ym.lengthOfMonth();
+                    sum+=vol.getValue();
+                    if (Integer.parseInt(date.split("-")[2])==lengthOfMonth && Integer.parseInt(vol.getKey().split(":")[1])==23) {
+                        energy.getMonthlyAvg().put(ym, sum/lengthOfMonth);
                         sum=0;
                     }
                 }
@@ -106,12 +102,11 @@ public class Main {
     }
 
     // put date & average on that date as map
-    private static void calculateDailyAvg(List<List<Energy>> data) {
+    private static void averageHourlyConsumptionPerDay(List<List<Energy>> data) {
         int count = 1;
         double sum = 0;
         for (List<Energy> file : data) {
             for (Energy energy : file) {
-                Map<LocalDate, Double> dailyAvg = energy.getDailyAvg();
                 for (Energy.Volume vol : energy.getVolumes()) {
                     if (count<24) {
                         sum+=vol.getValue();
@@ -121,7 +116,7 @@ public class Main {
 
                         try {
                             LocalDate date = LocalDate.parse(vol.getKey().split(":")[0], formatter);
-                            dailyAvg.put(date, sum/24.0);
+                            energy.getDailyAvg().put(date, sum/24.0);
                         } catch (DateTimeParseException e) {
                             System.out.println("Error: Unable to parse the date from the string.");
                             e.printStackTrace();
