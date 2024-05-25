@@ -11,7 +11,7 @@ public class Energy {
     private String end;
     private String start;
     private List<Volume> volumes;
-    private Map<LocalDate, Integer> dailyAvg = new HashMap<>();
+    private Map<LocalDate, Double> dailyAvg = new HashMap<>();
 
     public int getId() {
         return id;
@@ -45,9 +45,9 @@ public class Energy {
         this.volumes = volumes;
     }
 
-    public void setDailyAvg(Map<LocalDate, Integer> dailyAvg) {this.dailyAvg=dailyAvg;}
+    public void setDailyAvg(Map<LocalDate, Double> dailyAvg) {this.dailyAvg=dailyAvg;}
 
-    public Map<LocalDate, Integer> getDailyAvg() {
+    public Map<LocalDate, Double> getDailyAvg() {
         return dailyAvg;
     }
 

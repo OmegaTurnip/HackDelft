@@ -16,28 +16,33 @@ public class Main {
     public static void main(String[] args) {
         // setup
 
-        List<Energy> c1y = new ArrayList<>();
-        List<Energy> c3y = new ArrayList<>();
-        List<Energy> p1y = new ArrayList<>();
-        List<Energy> p3y = new ArrayList<>();
+//        List<Energy> c1y = new ArrayList<>();
+//        List<Energy> c3y = new ArrayList<>();
+//        List<Energy> p1y = new ArrayList<>();
+//        List<Energy> p3y = new ArrayList<>();
+        List<Energy> test = new ArrayList<>();
         List<List<Energy>> data = new ArrayList<>();
-        data.add(c1y);
-        data.add(c3y);
-        data.add(p1y);
-        data.add(p3y);
+        data.add(test);
+//        data.add(c1y);
+//        data.add(c3y);
+//        data.add(p1y);
+//        data.add(p3y);
         ObjectMapper mapper = new ObjectMapper();
-        String fileNamec1y = "src/main/resources/consumption-1y.csv";
-        String fileNamec3y = "src/main/resources/consumption-3y.csv";
-        String fileNamep1y = "src/main/resources/production-1y.csv";
-        String fileNamep3y = "src/main/resources/production-3y.csv";
+        String fileNameTest = "src/main/resources/sample.csv";
+//        String fileNamec1y = "src/main/resources/consumption-1y.csv";
+//        String fileNamec3y = "src/main/resources/consumption-3y.csv";
+//        String fileNamep1y = "src/main/resources/production-1y.csv";
+//        String fileNamep3y = "src/main/resources/production-3y.csv";
         List<String> fileNames = new ArrayList<>();
-        fileNames.add(fileNamec1y);
-        fileNames.add(fileNamec3y);
-        fileNames.add(fileNamep1y);
-        fileNames.add(fileNamep3y);
+        fileNames.add(fileNameTest);
+//        fileNames.add(fileNamec1y);
+//        fileNames.add(fileNamec3y);
+//        fileNames.add(fileNamep1y);
+//        fileNames.add(fileNamep3y);
 
         CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
-        for (int i = 0; i < 4; i++) {
+//        for (int i = 0; i < 4; i++) {
+        for (int i=0; i<1; i++) {
             String fileName = fileNames.get(i);
             try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).withSkipLines(1).build()) {
                 List<String[]> rows = csvReader.readAll();
@@ -67,11 +72,11 @@ public class Main {
 
         // put date & average on that date as map
 
-        int count = 0;
-        int sum = 0;
+        int count = 1;
+        double sum = 0;
         for (List<Energy> file : data) {
             for (Energy energy : file) {
-                Map<LocalDate, Integer> dailyAvg = energy.getDailyAvg();
+                Map<LocalDate, Double> dailyAvg = energy.getDailyAvg();
                 for (Energy.Volume vol : energy.getVolumes()) {
                     if (count<24) {
                         sum+=vol.getValue();
@@ -81,12 +86,12 @@ public class Main {
 
                         try {
                             LocalDate date = LocalDate.parse(vol.getKey().split(":")[0], formatter);
-                            dailyAvg.put(date, sum / 24);
+                            dailyAvg.put(date, sum/24.0);
                         } catch (DateTimeParseException e) {
                             System.out.println("Error: Unable to parse the date from the string.");
                             e.printStackTrace();
                         }
-                        count = 0;
+                        count = 1;
                         sum = 0;
                     }
                 }
