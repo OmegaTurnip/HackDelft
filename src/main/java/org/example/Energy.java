@@ -13,6 +13,8 @@ public class Energy {
     private List<Volume> volumes;
     private Map<LocalDate, Double> dailyAvg = new HashMap<>();
     private Map<YearMonth, Double> monthlyAvg = new HashMap<>();
+    private Map<LocalDate, Map<String, HourValue>> derivativeInfoDaily = new HashMap<>();
+    private Map<YearMonth, Map<String, HourValue>> derivativeInfoMonthly = new HashMap<>();
 
     public int getId() {
         return id;
@@ -58,6 +60,22 @@ public class Energy {
 
     public void setMonthlyAvg(Map<YearMonth, Double> monthlyAvg) {
         this.monthlyAvg = monthlyAvg;
+    }
+
+    public Map<LocalDate, Map<String, HourValue>> getDerivativeInfoDaily() {
+        return derivativeInfoDaily;
+    }
+
+    public void setDerivativeInfoDaily(Map<LocalDate, Map<String, HourValue>> derivativeInfoDaily) {
+        this.derivativeInfoDaily = derivativeInfoDaily;
+    }
+
+    public Map<YearMonth, Map<String, HourValue>> getDerivativeInfoMonthly() {
+        return derivativeInfoMonthly;
+    }
+
+    public void setDerivativeInfoMonthly(Map<YearMonth, Map<String, HourValue>> derivativeInfoMonthly) {
+        this.derivativeInfoMonthly = derivativeInfoMonthly;
     }
 
     public static class Volume {
