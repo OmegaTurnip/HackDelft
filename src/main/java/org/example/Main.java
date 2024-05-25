@@ -8,12 +8,14 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.*;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        // setup
+
         List<Energy> c1y = new ArrayList<>();
         List<Energy> c3y = new ArrayList<>();
         List<Energy> p1y = new ArrayList<>();
@@ -52,6 +54,7 @@ public class Main {
                         e.printStackTrace();
                     }
                     energy.setVolumes(volumes);
+
                     data.get(i).add(energy);
                 }
             } catch (Exception e) {
@@ -60,7 +63,46 @@ public class Main {
             }
         }
 
-        System.out.println("test");
+
+
+        // put date & average on that date as map
+
+        int count = 0;
+        int sum = 0;
+        for (List<Energy> file : data) {
+            for (Energy energy : file) {
+                Map<LocalDate, Integer> dailyAvg = energy.getDailyAvg();
+                for (Energy.Volume vol : energy.getVolumes()) {
+                    if (count<24) {
+                        sum+=vol.getValue();
+                        count++;
+                    } else {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                        try {
+                            LocalDate date = LocalDate.parse(vol.getKey().split(":")[0], formatter);
+                            dailyAvg.put(date, sum / 24);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Error: Unable to parse the date from the string.");
+                            e.printStackTrace();
+                        }
+                        count = 0;
+                        sum = 0;
+                    }
+                }
+            }
+        }
+
+        // test
+        for (List<Energy> file : data) {
+            for (Energy energy : file) {
+                System.out.println(energy.getId() + " " + energy.getDailyAvg());
+            }
+        }
+
+
+
+
 
 
     }

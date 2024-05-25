@@ -2,7 +2,8 @@ package org.example;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Energy {
 
@@ -10,6 +11,19 @@ public class Energy {
     private String end;
     private String start;
     private List<Volume> volumes;
+    private Map<LocalDate, Integer> dailyAvg = new HashMap<>();
+
+    public int getId() {
+        return id;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public String getStart() {
+        return start;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -29,6 +43,12 @@ public class Energy {
 
     public void setVolumes(List<Volume> volumes) {
         this.volumes = volumes;
+    }
+
+    public void setDailyAvg(Map<LocalDate, Integer> dailyAvg) {this.dailyAvg=dailyAvg;}
+
+    public Map<LocalDate, Integer> getDailyAvg() {
+        return dailyAvg;
     }
 
     public static class Volume {
