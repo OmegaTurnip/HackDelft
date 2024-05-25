@@ -8,7 +8,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
 import java.io.FileReader;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
@@ -70,8 +70,43 @@ public class Main {
 
 
 
-        // put date & average on that date as map
+        calculateDailyAvg(data);
+        calculateMonthlyAvg(data);
 
+        // test
+        for (List<Energy> file : data) {
+            for (Energy energy : file) {
+//                System.out.println(energy.getId() + " " + energy.getDailyAvg());
+                System.out.println(energy.getId() + " " + energy.getMonthlyAvg());
+            }
+        }
+
+    }
+
+    private static void calculateMonthlyAvg(List<List<Energy>> data) {
+        int lastMonth = 1;
+        double sum = 0;
+        for (List<Energy> file : data) {
+            for (Energy energy : file) {
+                Map<YearMonth, Double> monthlyAvg = energy.getMonthlyAvg();
+                for (Energy.Volume vol :  energy.getVolumes()) {
+                    int currentMonth = Integer.parseInt(vol.getKey().split("-")[1]);
+                    if (currentMonth==lastMonth) {
+                        sum+=vol.getValue();
+                    } else {
+                        String date = vol.getKey().split(":")[0];
+                        YearMonth ym = YearMonth.of(Integer.parseInt(date.split("-")[0]), Integer.parseInt(date.split("-")[1]));
+                        monthlyAvg.put(ym, sum/24.0);
+                        lastMonth=currentMonth;
+                        sum=0;
+                    }
+                }
+            }
+        }
+    }
+
+    // put date & average on that date as map
+    private static void calculateDailyAvg(List<List<Energy>> data) {
         int count = 1;
         double sum = 0;
         for (List<Energy> file : data) {
@@ -97,18 +132,5 @@ public class Main {
                 }
             }
         }
-
-        // test
-        for (List<Energy> file : data) {
-            for (Energy energy : file) {
-                System.out.println(energy.getId() + " " + energy.getDailyAvg());
-            }
-        }
-
-
-
-
-
-
     }
 }
